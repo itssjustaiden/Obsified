@@ -7400,13 +7400,8 @@ function Library:CreateWindow(WindowInfo)
         local ToggleButton = Library:AddDraggableButton("Toggle", function()
             Library:Toggle()
         end)
-        if WindowInfo.MobileButtonsSide == "Right" then
-            ToggleButton.Button.Position = UDim2.new(0.5, 0, 0, 4)
-            ToggleButton.Button.AnchorPoint = Vector2.new(0.5, 0)
-        else
-            ToggleButton.Button.Position = UDim2.new(0.5, 0, 0, 4)
-            ToggleButton.Button.AnchorPoint = Vector2.new(0.5, 0)
-        end
+        ToggleButton.Button.Position = UDim2.new(0.5, 0, 0, -10)
+        ToggleButton.Button.AnchorPoint = Vector2.new(0.5, 0)
     end
 
     --// Execution \\--

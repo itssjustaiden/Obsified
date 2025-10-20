@@ -7401,10 +7401,10 @@ function Library:CreateWindow(WindowInfo)
             Library:Toggle()
         end)
         if WindowInfo.MobileButtonsSide == "Right" then
-            ToggleButton.Button.Position = UDim2.new(1, -6, 0, 6)
-            ToggleButton.Button.AnchorPoint = Vector2.new(1, 0)
+            ToggleButton.Button.Position = UDim2.new(0.5, 0, 0, 4)
+            ToggleButton.Button.AnchorPoint = Vector2.new(0.5, 0)
         else
-            ToggleButton.Button.Position = UDim2.new(0.5, 0, 0, 6)
+            ToggleButton.Button.Position = UDim2.new(0.5, 0, 0, 4)
             ToggleButton.Button.AnchorPoint = Vector2.new(0.5, 0)
         end
     end

@@ -13,6 +13,10 @@ local HttpService = cloneref(game:GetService("HttpService"))
 local ChatManager = {} do
     ChatManager.Messages = {}
     local SERVER_URL = "https://obsifiedchatmanageraddon.egesdabest.workers.dev/?room=default"
+    local BaseGroupbox = getgenv().Library and getgenv().Library.BaseGroupbox or nil
+    if not BaseGroupbox then
+        warn("ChatManager: No lib BaseGroupbox found—methods may fail. Ensure addon loads after lib.")
+    end
     local function fetchMessages() -- fetches messages from the server
         local success, response = pcall(function() -- safe call
             return HttpService:GetAsync(SERVER_URL) -- get the response
@@ -36,25 +40,55 @@ local ChatManager = {} do
 --==================================================================================================================--
     function ChatManager:CreateChat(tab) -- creates the chat tab
         if not tab then
-            warn("ChatManager: tab is nil! Check your loader.")
+            warn("ChatManager: tab is nil! Check your loader and Window:AddTab() must return valid tab.")
             return
         end
-        local leftGroupbox = tab:AddLeftGroupbox("Messages", "chat") 
-        local rightGroupbox = tab:AddRightGroupbox("Chat")
-        local scrollingFrame = leftGroupbox:AddScrollingFrame("Messages", {Height = 200})
-        local input = rightGroupbox:AddInput("ChatInput", {Text = ""})
-        local button = rightGroupbox:AddButton("Send", function()
-            local message = input.Value -- get the input val
-            if message ~= "" then -- if it's not empty
-                local username = tostring(cloneref(game.Players.LocalPlayer).DisplayName or "User") -- get the username (cloneref here too)
-                username = username:sub(1, 5) -- limit to 5 chars
-                local msgData = {user = username, text = message} -- create message data
-                table.insert(self.Messages, msgData) -- insert into messages
-                input:SetValue("") -- clear input
-                self:UpdateChatDisplay(scrollingFrame) -- update display
-                postMessage(msgData) -- post to server
-            end
+        print("ChatManager: Tab object type:", typeof(tab))
+        if BaseGroupbox and not getmetatable(tab) then
+            setmetatable(tab, BaseGroupbox)
+            print("ChatManager: Restored metatable on tab.")
+        end
+        print("AddLeftGroupbox type:", typeof(tab.AddLeftGroupbox))  -- if not func you're funced
+        print("AddRightGroupbox type:", typeof(tab.AddRightGroupbox)) -- if not func you're funced
+        local ok1, leftGroupbox = pcall(function() return tab:AddLeftGroupbox("Messages", "chat") end)
+        if not ok1 or not leftGroupbox then
+            warn("ChatManager: AddLeftGroupbox failed:", leftGroupbox)  -- Logs the error
+            return
+        end 
+        local ok2, rightGroupbox = pcall(function() return tab:AddRightGroupbox("Chat") end)
+        if not ok2 or not rightGroupbox then
+            warn("ChatManager: AddRightGroupbox failed:", rightGroupbox)
+            return
+        end
+        local ok3, scrollingFrame = pcall(function() return leftGroupbox:AddScrollingFrame("Messages", {Height = 200}) end)
+        if not ok3 or not scrollingFrame then
+            warn("ChatManager: AddScrollingFrame failed:", scrollingFrame)
+            return
+        end
+        local ok4, input = pcall(function() return rightGroupbox:AddInput("ChatInput", {Text = ""}) end)
+        if not ok4 or not input then
+            warn("ChatManager: AddInput failed:", input)
+            return
+        end
+        local ok5, button = pcall(function()
+            return rightGroupbox:AddButton("Send", function()
+                local message = input.Value -- get the input val
+                if message ~= "" then -- if it's not empty
+                    local LocalPlayer = cloneref(game.Players.LocalPlayer)
+                    local username = tostring(LocalPlayer.DisplayName or "User") -- get the username (cloneref here too)
+                    username = username:sub(1, 5) -- limit to 5 chars
+                    local msgData = {user = username, text = message} -- create message data
+                    table.insert(self.Messages, msgData) -- insert into messages
+                    input:SetValue("") -- clear input
+                    self:UpdateChatDisplay(scrollingFrame) -- update display
+                    postMessage(msgData) -- post to server
+                end
+            end)
         end)
+        if not ok5 or not button then
+            warn("ChatManager: AddButton failed:", button)
+            return
+        end
 --==================================================================================================================--
         self.Messages = fetchMessages() -- fetch messages
         self:UpdateChatDisplay(scrollingFrame) -- update display
@@ -76,18 +110,24 @@ local ChatManager = {} do
     end
 --==================================================================================================================--
     function ChatManager:UpdateChatDisplay(scrollingFrame) -- updates the chat display
-        if not scrollingFrame then return end -- nil guard
-        scrollingFrame:Clear() -- clear existing messages
-        for _, msg in ipairs(self.Messages) do -- for each message
-            scrollingFrame:AddLabel(self:FormatMessage(msg), true) -- add formatted message
+        if not scrollingFrame then 
+            warn("ChatManager: scrollingFrame is nil in UpdateChatDisplay!")
+            return 
         end
-        scrollingFrame.CanvasPosition = Vector2.new(0, scrollingFrame.AbsoluteCanvasSize.Y)
-        --^^ auto scroll to bottom
+        local ok, err = pcall(function()
+            scrollingFrame:Clear() -- clear existing messages
+            for _, msg in ipairs(self.Messages) do -- for each message
+                scrollingFrame:AddLabel(self:FormatMessage(msg), true) -- add formatted message
+            end
+            scrollingFrame.CanvasPosition = Vector2.new(0, scrollingFrame.AbsoluteCanvasSize.Y)
+            --^^ auto scroll to bottom
+        end)
+        if not ok then
+            warn("ChatManager: UpdateChatDisplay errored:", err)
+        end
     end
 end
 --==================================================================================================================--
-return ChatManager
-
 print([[
   ____                                                         _                ____  ___   ___  ____    _                    _______     _____
  |  _ \ ___ _ __ ___  _____   _____ _ __ __ _ _ __   ___ ___  (_)___    __ _   / ___|/ _ \ / _ \|  _ \  | |__   ___  _   _   / /___ /   _|___ /
@@ -96,3 +136,5 @@ print([[
  |_|   \___|_|  |___/\___| \_/ \___|_|  \__,_|_| |_|\___\___| |_|___/  \__,_|  \____|\___/ \___/|____/  |_.__/ \___/ \__, |  \_\____/  (_)____/
                                                                                                                      |___/
 ]])
+
+return ChatManager

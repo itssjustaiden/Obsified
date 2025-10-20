@@ -5,7 +5,9 @@ https://github.com/itssjustaiden/obsified
 print("we love femboys right twin??")
 ]]
 
-local HttpService = game:GetService("HttpService")
+local cloneref = cloneref or clonereference or function(inst) return inst end
+local HttpService = cloneref(game:GetService("HttpService"))
+
 local ChatManager = {} do
     ChatManager.Messages = {}
     local SERVER_URL = "https://obsifiedchatmanageraddon.egesdabest.workers.dev/?room=default"

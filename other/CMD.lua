@@ -3,10 +3,14 @@ local plr = game:GetService("Players")
 local lp = plr.LocalPlayer
 local uis = game:GetService("UserInputService")
 local cg = game:GetService("CoreGui")
+local rsc = game:GetService("RunService")
+local reps = game:GetService("ReplicatedStorage")
+
 -- // Variables \\ --
 local CommandPrompt = Instance.new("ScreenGui")
 local TopFrame, HideFrame, Header, Prompt, TextBox, Icon, Title, Close, Hide, Open = Instance.new("Frame"), Instance.new("Frame"), Instance.new("TextLabel"), Instance.new("TextLabel"), Instance.new("TextBox"), Instance.new("ImageLabel"), Instance.new("TextLabel"), Instance.new("TextButton"), Instance.new("TextButton"), Instance.new("TextButton")
 local dragging, dragStart, startPos = false, nil, nil
+local cmdFolder = cg:FindFirstChild("CMD") or Instance.new("Folder")
 
 -- // Functions \\ --
 local function hexColor(hex)
@@ -15,8 +19,10 @@ local function hexColor(hex)
 end
 
 -- // UI Setup \\ --
+cmdFolder.Name = "CMD"
+cmdFolder.Parent = cg
 CommandPrompt.Name = "Command Prompt"
-CommandPrompt.Parent = game.CoreGui
+CommandPrompt.Parent = cmdFolder
 TopFrame.Name = "TopFrame"
 TopFrame.Parent = CommandPrompt
 TopFrame.BackgroundColor3 = hexColor("#ffffffff")
@@ -77,3 +83,8 @@ Open.Parent = TopFrame Open.BackgroundColor3 = hexColor("#ffffffff") Open.Border
 TopFrame.InputBegan:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 then dragging=true dragStart=i.Position startPos=TopFrame.Position end end)
 uis.InputChanged:Connect(function(i) if dragging and i.UserInputType==Enum.UserInputType.MouseMovement then local d=i.Position-dragStart TopFrame.Position=UDim2.new(startPos.X.Scale,startPos.X.Offset+d.X,startPos.Y.Scale,startPos.Y.Offset+d.Y) end end)
 uis.InputEnded:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 then dragging=false end end)
+lp.CharacterAdded:Connect(function()
+	task.wait(1)
+	if not cmdFolder.Parent then cmdFolder.Parent = cg end
+	if not CommandPrompt.Parent then CommandPrompt.Parent = cmdFolder end
+end)

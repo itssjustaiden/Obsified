@@ -2,7 +2,7 @@
 local plr = game:GetService("Players")
 local lp = plr.LocalPlayer
 local uis = game:GetService("UserInputService")
-
+local cg = game:GetService("CoreGui")
 -- // Variables \\ --
 local CommandPrompt = Instance.new("ScreenGui")
 local TopFrame, HideFrame, Header, Prompt, TextBox, Icon, Title, Close, Hide, Open = Instance.new("Frame"), Instance.new("Frame"), Instance.new("TextLabel"), Instance.new("TextLabel"), Instance.new("TextBox"), Instance.new("ImageLabel"), Instance.new("TextLabel"), Instance.new("TextButton"), Instance.new("TextButton"), Instance.new("TextButton")
@@ -73,7 +73,7 @@ Title.TextColor3 = hexColor("#000000")
 Title.TextSize = 14
 Close.Parent = TopFrame Close.BackgroundColor3 = hexColor("#ffffffff") Close.BorderSizePixel = 0 Close.Position = UDim2.new(0.952,0,0,0) Close.Size = UDim2.new(0,24,0,24) Close.Font = Enum.Font.SourceSans Close.Text = "X" Close.TextColor3 = hexColor("#000000") Close.TextSize = 20 Close.TextYAlignment = Enum.TextYAlignment.Top Close.MouseButton1Down:Connect(function() CommandPrompt:Destroy() end)
 Hide.Parent = TopFrame Hide.BackgroundColor3 = hexColor("#ffffffff") Hide.BorderSizePixel = 0 Hide.Position = UDim2.new(0.856,0,0,0) Hide.Size = UDim2.new(0,24,0,24) Hide.Font = Enum.Font.SourceSans Hide.Text = "-" Hide.TextColor3 = hexColor("#000000") Hide.TextSize = 20 Hide.TextYAlignment = Enum.TextYAlignment.Top Hide.MouseButton1Down:Connect(function() HideFrame.Visible=false Header.Visible=false Prompt.Visible=false end)
-Open.Parent = TopFrame Open.BackgroundColor3 = hexColor("#ffffffff") Open.BorderSizePixel = 0 Open.Position = UDim2.new(0.904,0,0,0) Open.Size = UDim2.new(0,24,0,24) Open.Font = Enum.Font.SourceSans Open.Text = "M" Open.TextColor3 = hexColor("#ffffff") Open.TextSize = 20 Open.TextYAlignment = Enum.TextYAlignment.Top Open.MouseButton1Down:Connect(function() HideFrame.Visible=true Header.Visible=true Prompt.Visible=true end)
+Open.Parent = TopFrame Open.BackgroundColor3 = hexColor("#ffffffff") Open.BorderSizePixel = 0 Open.Position = UDim2.new(0.904,0,0,0) Open.Size = UDim2.new(0,24,0,24) Open.Font = Enum.Font.SourceSans Open.Text = "M" Open.TextColor3 = hexColor("#000000ff") Open.TextSize = 20 Open.TextYAlignment = Enum.TextYAlignment.Top Open.MouseButton1Down:Connect(function() HideFrame.Visible=true Header.Visible=true Prompt.Visible=true end)
 TopFrame.InputBegan:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 then dragging=true dragStart=i.Position startPos=TopFrame.Position end end)
 uis.InputChanged:Connect(function(i) if dragging and i.UserInputType==Enum.UserInputType.MouseMovement then local d=i.Position-dragStart TopFrame.Position=UDim2.new(startPos.X.Scale,startPos.X.Offset+d.X,startPos.Y.Scale,startPos.Y.Offset+d.Y) end end)
 uis.InputEnded:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 then dragging=false end end)

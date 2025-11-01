@@ -100,9 +100,7 @@ function Library:CreateWindow(config)
         Description = "Lists all commands",
         Callback = function(printLine)
             printLine("Commands:") 
-            for name,_ in pairs(Window.Commands) do
-                printLine(name)
-            end
+            for name,_ in pairs(Window.Commands) do printLine(name) end
         end
     }
     Window.Commands["clear"] = {

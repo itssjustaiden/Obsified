@@ -11,6 +11,7 @@ local CommandPrompt = Instance.new("ScreenGui")
 local TopFrame, HideFrame, Header, Prompt, TextBox, Icon, Title, Close, Hide, Open = Instance.new("Frame"), Instance.new("Frame"), Instance.new("TextLabel"), Instance.new("TextLabel"), Instance.new("TextBox"), Instance.new("ImageLabel"), Instance.new("TextLabel"), Instance.new("TextButton"), Instance.new("TextButton"), Instance.new("TextButton")
 local dragging, dragStart, startPos = false, nil, nil
 local cmdFolder = cg:FindFirstChild("CMD") or Instance.new("Folder")
+local isMobile = uis.TouchEnabled and not uis.KeyboardEnabled
 
 -- // Functions \\ --
 local function hexColor(hex)

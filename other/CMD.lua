@@ -105,7 +105,7 @@ function Library:CreateWindow(config)
     }
     Window.Commands["clear"] = {
         Name = "clear",
-        Description = "Clears the screen",
+        Description = "Clears the cmdbar",
         Callback = function(printLine)
             TextBox.Text = ""
             printLine("C:\\Users\\"..lp.Name..">")
